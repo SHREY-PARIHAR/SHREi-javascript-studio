@@ -1,0 +1,859 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Console Playground | Shrey</title>
+
+<style>
+:root {
+  --bg: #0b0e14;
+  --panel: #111620;
+  --panel2: #171e2a;
+  --border: #293243;
+  --text: #e7edf7;
+  --muted: #8995a8;
+  --green: #50e3a4;
+  --blue: #75a7ff;
+  --red: #ff737e;
+  --yellow: #ffd479;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  min-height: 100vh;
+}
+
+button, textarea { font: inherit; }
+
+button {
+  cursor: pointer;
+  transition: .2s;
+}
+
+button:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+header {
+  min-height: 72px;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #0e121b;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  height: 43px;
+  width: 43px;
+  display: grid;
+  place-items: center;
+  background: #18372d;
+  color: var(--green);
+  border: 1px solid #286449;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 19px;
+}
+
+h1 {
+  font-size: 17px;
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 14px;
+  color: var(--text);
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.btn:hover { filter: brightness(1.2); }
+
+.run-btn {
+  color: #07150e;
+  background: var(--green);
+  border-color: var(--green);
+  font-weight: 800;
+}
+
+main { padding: 18px; }
+
+.welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.welcome h2 {
+  font-size: 19px;
+  margin: 0 0 5px;
+}
+
+.welcome p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.status {
+  color: var(--green);
+  font-size: 12px;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 15px;
+  align-items: stretch;
+}
+
+.panel {
+  min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.panel-head {
+  padding: 12px 14px;
+  min-height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 10px 0;
+  background: #0e131c;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  padding: 10px 14px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 13px;
+}
+
+.tab.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+  background: var(--panel);
+}
+
+.editor-wrap {
+  display: flex;
+  height: 460px;
+  background: #10151f;
+  overflow: hidden;
+}
+
+.line-numbers {
+  width: 42px;
+  flex-shrink: 0;
+  padding: 15px 9px;
+  text-align: right;
+  overflow: hidden;
+  white-space: pre;
+  color: #59667a;
+  background: #10151f;
+  border-right: 1px solid #202938;
+  font: 13px/1.65 Consolas, monospace;
+  user-select: none;
+}
+
+textarea {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  resize: none;
+  border: 0;
+  outline: none;
+  padding: 15px;
+  color: #dbe7f8;
+  background: #10151f;
+  caret-color: var(--green);
+  font: 13px/1.65 Consolas, "Courier New", monospace;
+  tab-size: 2;
+  white-space: pre;
+  overflow: auto;
+}
+
+textarea:focus { outline: none; }
+
+.editor-foot {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 13px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.right-stack {
+  display: grid;
+  grid-template-rows: minmax(230px, .9fr) minmax(280px, 1.1fr);
+  gap: 15px;
+  min-width: 0;
+}
+
+.console {
+  height: 100%;
+  min-height: 180px;
+  max-height: 340px;
+  overflow: auto;
+  padding: 13px;
+  background: #090d13;
+  font: 12px/1.7 Consolas, monospace;
+  overflow-wrap: anywhere;
+}
+
+.log {
+  padding: 3px 0 7px;
+  border-bottom: 1px solid #171e29;
+  white-space: pre-wrap;
+}
+
+.log.info { color: #c8d3e5; }
+.log.success { color: var(--green); }
+.log.error { color: var(--red); }
+.log.warn { color: var(--yellow); }
+
+.log-label {
+  color: #718097;
+  margin-right: 8px;
+}
+
+.error-help {
+  margin: 12px;
+  padding: 12px;
+  border: 1px solid #59452a;
+  background: #241d14;
+  border-radius: 9px;
+  display: none;
+}
+
+.error-help h3 {
+  font-size: 13px;
+  color: var(--yellow);
+  margin: 0 0 8px;
+}
+
+.error-help p {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 5px 0;
+  color: #e5d8c3;
+  white-space: pre-wrap;
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  min-height: 250px;
+  display: block;
+  border: 0;
+  background: white;
+}
+
+.tip {
+  margin-top: 15px;
+  padding: 13px 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.tip strong { color: var(--green); }
+
+.examples {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.examples button {
+  padding: 7px 10px;
+  font-size: 11px;
+}
+
+footer {
+  text-align: center;
+  padding: 18px;
+  color: #647187;
+  font-size: 12px;
+}
+
+@media (max-width: 850px) {
+  main { padding: 12px; }
+  .workspace { grid-template-columns: 1fr; }
+  .editor-wrap { height: 380px; }
+  .right-stack { grid-template-rows: 270px 350px; }
+}
+
+@media (max-width: 480px) {
+  header { padding: 12px; }
+  .toolbar { width: 100%; }
+  .toolbar .btn { flex: 1; padding: 9px; }
+  .tab { padding: 10px; }
+  .editor-wrap { height: 340px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">&lt;/&gt;</div>
+    <div>
+      <h1>JS Console Playground</h1>
+      <div class="subtitle">Write code. Run. Learn from errors.</div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn run-btn" id="runBtn">▶ Run Code</button>
+    <button class="btn" id="clearBtn">Clear Console</button>
+    <button class="btn" id="resetBtn">Reset Code</button>
+  </div>
+</header>
+
+<main>
+  <div class="welcome">
+    <div>
+      <h2>Your Coding Workspace</h2>
+      <p>Practice JavaScript logic and build your first web projects.</p>
+    </div>
+    <span class="status" id="status">● Ready to run</span>
+  </div>
+
+  <div class="workspace">
+    <section class="panel">
+      <div class="panel-head">
+        <span class="panel-title">⌨ Code Editor</span>
+        <span class="subtitle" id="lineCount">Lines: 1</span>
+      </div>
+
+      <div class="tabs">
+        <button class="tab" data-tab="html">🌐 HTML</button>
+        <button class="tab" data-tab="css">🎨 CSS</button>
+        <button class="tab active" data-tab="js">🟨 JavaScript</button>
+      </div>
+
+      <div class="editor-wrap">
+        <div class="line-numbers" id="lineNumbers">1</div>
+        <textarea id="htmlEditor" spellcheck="false"
+          autocomplete="off" autocapitalize="off"
+          aria-label="HTML editor" hidden></textarea>
+        <textarea id="cssEditor" spellcheck="false"
+          autocomplete="off" autocapitalize="off"
+          aria-label="CSS editor" hidden></textarea>
+        <textarea id="jsEditor" spellcheck="false"
+          autocomplete="off" autocapitalize="off"
+          aria-label="JavaScript editor"></textarea>
+      </div>
+
+      <div class="editor-foot">
+        <span>Ctrl + Enter → Run code</span>
+        <span>Plain text editor · No installation</span>
+      </div>
+    </section>
+
+    <div class="right-stack">
+      <section class="panel">
+        <div class="panel-head">
+          <span class="panel-title">⌁ Console & Error Guide</span>
+          <button class="btn" id="clearConsoleBtn"
+            style="padding:6px 9px;font-size:11px">Clear</button>
+        </div>
+
+        <div class="console" id="console">
+          <div class="log info">👋 Welcome, Shrey!</div>
+          <div class="log info">Write JavaScript and click Run Code.</div>
+          <div class="log success">✓ Your results will appear here.</div>
+        </div>
+
+        <div class="error-help" id="errorHelp">
+          <h3>🧠 Let's understand this error</h3>
+          <p id="errorName"></p>
+          <p id="errorMeaning"></p>
+          <p id="errorFix"></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <span class="panel-title">▣ HTML Live Preview</span>
+          <button class="btn" id="refreshBtn"
+            style="padding:6px 9px;font-size:11px">↻ Refresh</button>
+        </div>
+        <iframe
+          class="preview"
+          id="preview"
+          title="HTML output preview"
+          sandbox="allow-scripts">
+        </iframe>
+      </section>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>💡 Quick practice:</strong>
+    Change the code, click Run Code, and observe the output.
+    When something fails, read the error guide before changing your code.
+    <div class="examples" style="margin-top:10px">
+      <button class="btn" data-example="variables">Variables</button>
+      <button class="btn" data-example="ifelse">If / Else</button>
+      <button class="btn" data-example="loops">Loops</button>
+      <button class="btn" data-example="functions">Functions</button>
+      <button class="btn" data-example="arrays">Arrays</button>
+      <button class="btn" data-example="intentional">Try an error</button>
+    </div>
+  </div>
+</main>
+
+<footer>Made for Shrey to Code and Master 🚀</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const editors = {
+  html: $("htmlEditor"),
+  css: $("cssEditor"),
+  js: $("jsEditor")
+};
+
+const initialCode = {
+  html: `<h1>Hello, Shrey! 👋</h1>
+<p>Welcome to your coding playground.</p>
+<button onclick="showMessage()">Click me</button>
+<p id="message"></p>`,
+  css: `body {
+  font-family: Arial, sans-serif;
+  padding: 25px;
+  color: #172033;
+}
+
+h1 {
+  color: #14865c;
+}
+
+button {
+  padding: 10px 16px;
+  background: #14865c;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+}`,
+  js: `// Write your JavaScript here
+
+console.log("Hey Shrey! 👋");
+console.log("Let's learn JavaScript.");
+
+let a = 10;
+let b = 20;
+
+console.log("Sum:", a + b);
+
+function greet(name) {
+  return "Hello, " + name + "!";
+}
+
+console.log(greet("Shrey"));
+
+function showMessage() {
+  document.getElementById("message").textContent =
+    "Great! Your button works.";
+}`
+};
+
+let activeTab = "js";
+let runId = 0;
+let timeoutId = null;
+
+function setStatus(message, isError = false) {
+  $("status").textContent = (isError ? "● " : "● ") + message;
+  $("status").style.color = isError ? "var(--red)" : "var(--green)";
+}
+
+function updateLines() {
+  const editor = editors[activeTab];
+  const count = editor.value.split("\n").length;
+  $("lineNumbers").textContent =
+    Array.from({length: count}, (_, i) => i + 1).join("\n");
+  $("lineCount").textContent = "Lines: " + count;
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+
+  Object.entries(editors).forEach(([name, editor]) => {
+    editor.hidden = name !== tab;
+  });
+
+  document.querySelectorAll(".tab").forEach(button => {
+    button.classList.toggle("active", button.dataset.tab === tab);
+  });
+
+  updateLines();
+  editors[tab].focus();
+}
+
+document.querySelectorAll(".tab").forEach(button => {
+  button.addEventListener("click", () => switchTab(button.dataset.tab));
+});
+
+Object.values(editors).forEach(editor => {
+  editor.addEventListener("input", updateLines);
+
+  editor.addEventListener("scroll", () => {
+    if (!editor.hidden) {
+      $("lineNumbers").scrollTop = editor.scrollTop;
+    }
+  });
+
+  // Insert two spaces when Tab is pressed.
+  editor.addEventListener("keydown", event => {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      editor.setRangeText("  ", start, end, "end");
+      updateLines();
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+      event.preventDefault();
+      runCode();
+    }
+  });
+});
+
+function clearConsole() {
+  $("console").innerHTML = "";
+  $("errorHelp").style.display = "none";
+}
+
+function printToConsole(type, ...args) {
+  const line = document.createElement("div");
+  line.className = "log " + type;
+
+  const label = document.createElement("span");
+  label.className = "log-label";
+  label.textContent = type === "error" ? "✖" :
+    type === "warn" ? "⚠" : "›";
+
+  const content = document.createElement("span");
+  content.textContent = args.map(formatValue).join(" ");
+
+  line.append(label, content);
+  $("console").appendChild(line);
+  $("console").scrollTop = $("console").scrollHeight;
+}
+
+function formatValue(value) {
+  if (typeof value === "string") return value;
+  if (value instanceof Error) return value.toString();
+
+  if (value === undefined) return "undefined";
+  if (typeof value === "function") {
+    return value.toString();
+  }
+
+  try {
+    return JSON.stringify(value, null, 2) ?? String(value);
+  } catch {
+    return String(value);
+  }
+}
+
+function explainError(message, lineNumber) {
+  const text = String(message);
+  let meaning = "JavaScript could not finish running this code.";
+  let fix = "Read the error message and check the relevant line.";
+
+  if (/Unexpected token|Unexpected end of input|missing \)/i.test(text)) {
+    meaning = "JavaScript found code that does not follow its syntax rules.";
+    fix = "Check brackets (), {}, [], quotes and missing closing symbols.";
+  } else if (/is not defined/i.test(text)) {
+    meaning = "You used a variable or function name JavaScript cannot find.";
+    fix = "Check spelling, capitalization, and whether it was declared before use.";
+  } else if (/already been declared|Identifier .* already declared/i.test(text)) {
+    meaning = "The same let or const variable was declared more than once in the same scope.";
+    fix = "Rename the variable or update its existing value instead of declaring it again.";
+  } else if (/Cannot read propert|Cannot read properties|undefined.*reading|null.*reading/i.test(text)) {
+    meaning = "Your code tried to access a property on a null or undefined value.";
+    fix = "Check the value before accessing its property. Verify that the element or object exists.";
+  } else if (/not a function/i.test(text)) {
+    meaning = "You tried to call a value as if it were a function.";
+    fix = "Check the value's type and spelling. Make sure the function exists.";
+  } else if (/Assignment to constant variable/i.test(text)) {
+    meaning = "You tried to reassign a variable declared with const.";
+    fix = "Use let if the variable needs to be reassigned, or remove the reassignment.";
+  } else if (/Unexpected identifier/i.test(text)) {
+    meaning = "JavaScript encountered a word in a position where it was not expected.";
+    fix = "Check missing operators, commas, quotes, and semicolons around the reported location.";
+  } else if (/Maximum call stack/i.test(text)) {
+    meaning = "A function may be calling itself repeatedly without stopping.";
+    fix = "Check your recursion and make sure a stopping condition can be reached.";
+  } else if (/fetch|network|failed to load/i.test(text)) {
+    meaning = "A network request may have failed.";
+    fix = "Check the URL, internet connection, server response, and browser permissions.";
+  }
+
+  $("errorName").textContent = "Error: " + text;
+  $("errorMeaning").textContent = "What it means: " + meaning;
+  $("errorFix").textContent = "What to check: " + fix +
+    (lineNumber ? "\nReported line: " + lineNumber : "");
+  $("errorHelp").style.display = "block";
+}
+
+function makePreviewDocument() {
+  const html = editors.html.value;
+  const css = editors.css.value;
+  const js = editors.js.value;
+
+  // The preview has a sandbox and runs separately from this editor.
+  // Escape closing style/script sequences before embedding user code.
+  const safeCss = css.replace(/<\/style/gi, "<\\/style");
+  const safeJs = js.replace(/<\/script/gi, "<\\/script");
+
+  const bootstrap = `
+<script>
+(function() {
+  const send = (type, args, line) => {
+    try {
+      parent.postMessage({
+        source: "shrey-playground",
+        runId: ${JSON.stringify(runId)},
+        type,
+        args: Array.from(args || []).map(value => {
+          if (value instanceof Error) return value.toString();
+          if (typeof value === "undefined") return "undefined";
+          try {
+            if (typeof value === "string") return value;
+            return JSON.stringify(value);
+          } catch {
+            return String(value);
+          }
+        }),
+        line: line || null
+      }, "*");
+    } catch (_) {}
+  };
+
+  ["log", "info", "warn", "error", "debug"].forEach(type => {
+    const original = console[type].bind(console);
+    console[type] = function(...args) {
+      send(type === "error" ? "error" :
+           type === "warn" ? "warn" : "info", args);
+      original(...args);
+    };
+  });
+
+  window.addEventListener("error", event => {
+    send("error", [event.message || "Unknown runtime error"],
+         event.lineno || null);
+  });
+
+  window.addEventListener("unhandledrejection", event => {
+    send("error", ["Unhandled promise rejection:", event.reason]);
+  });
+})();
+<\/script>`;
+
+  return `<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>${safeCss}</style>
+</head>
+<body>
+${html}
+${bootstrap}
+<script>
+try {
+${safeJs}
+} catch (error) {
+  parent.postMessage({
+    source: "shrey-playground",
+    runId: ${JSON.stringify(runId)},
+    type: "error",
+    args: [error.name + ": " + error.message],
+    line: error.lineNumber || null
+  }, "*");
+}
+<\/script>
+</body>
+</html>`;
+}
+
+window.addEventListener("message", event => {
+  const data = event.data;
+
+  if (!data || data.source !== "shrey-playground") return;
+  if (data.runId !== runId) return;
+
+  const type = data.type === "error" ? "error" :
+    data.type === "warn" ? "warn" : "info";
+
+  printToConsole(type, ...(data.args || []));
+
+  if (type === "error") {
+    setStatus("Error detected", true);
+    explainError((data.args || []).join(" "), data.line);
+  }
+});
+
+function runCode() {
+  runId++;
+
+  if (timeoutId) clearTimeout(timeoutId);
+  clearConsole();
+  setStatus("Running...");
+
+  printToConsole("info", "▶ Running your code...");
+
+  $("preview").srcdoc = makePreviewDocument();
+
+  timeoutId = setTimeout(() => {
+    if ($("status").textContent === "● Running...") {
+      printToConsole("warn",
+        "Execution is taking longer than expected. Check for an infinite loop.");
+      setStatus("Check your code", true);
+      explainError(
+        "Code may be running too long, possibly due to an infinite loop."
+      );
+    } else if ($("status").textContent === "● Running...") {
+      setStatus("Finished");
+    }
+  }, 1500);
+
+  // The timeout is a warning, not a reliable way to stop an infinite loop
+  // inside an iframe. Use short-running practice code.
+  setTimeout(() => {
+    if ($("status").textContent === "● Running...") {
+      setStatus("Finished");
+    }
+  }, 300);
+}
+
+function resetCode() {
+  if (!confirm("Reset all editors to the original example code?")) return;
+
+  Object.keys(editors).forEach(key => {
+    editors[key].value = initialCode[key];
+  });
+
+  switchTab("js");
+  runCode();
+}
+
+$("runBtn").addEventListener("click", runCode);
+$("clearBtn").addEventListener("click", clearConsole);
+$("clearConsoleBtn").addEventListener("click", clearConsole);
+$("refreshBtn").addEventListener("click", runCode);
+$("resetBtn").addEventListener("click", resetCode);
+
+const examples = {
+  variables: `let name = "Shrey";
+let age = 20;
+
+console.log("Name:", name);
+console.log("Age:", age);`,
+  ifelse: `let marks = 75;
+
+if (marks >= 40) {
+  console.log("You passed!");
+} else {
+  console.log("Keep practising.");
+}`,
+  loops: `for (let i = 1; i <= 5; i++) {
+  console.log("Number:", i);
+}`,
+  functions: `function add(a, b) {
+  return a + b;
+}
+
+console.log(add(10, 20));`,
+  arrays: `const fruits = ["Apple", "Mango", "Banana"];
+
+fruits.forEach(function(fruit) {
+  console.log(fruit);
+});`,
+  intentional: `console.log(myVariable);`
+};
+
+document.querySelectorAll("[data-example]").forEach(button => {
+  button.addEventListener("click", () => {
+    editors.js.value = examples[button.dataset.example];
+    switchTab("js");
+    updateLines();
+    runCode();
+  });
+});
+
+Object.keys(editors).forEach(key => {
+  editors[key].value = initialCode[key];
+});
+
+switchTab("js");
+runCode();
+</script>
+</body>
+</html>
